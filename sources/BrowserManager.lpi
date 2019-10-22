@@ -19,8 +19,9 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
-      <BuildNr Value="5"/>
-      <StringTable CompanyName="TENROK" FileDescription="Browser Manager" InternalName="BrowserManager" OriginalFilename="BrowserManager.exe" ProductName="BrowserManager" ProductVersion="1.0.0"/>
+      <RevisionNr Value="1"/>
+      <BuildNr Value="7"/>
+      <StringTable CompanyName="TENROK" FileDescription="Browser Manager" InternalName="BrowserManager" OriginalFilename="BrowserManager.exe" ProductName="BrowserManager" ProductVersion="1.0.1"/>
     </VersionInfo>
     <BuildModes Count="4">
       <Item1 Name="Win32-Debug" Default="True"/>
@@ -138,7 +139,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="4">
+    <Units Count="5">
       <Unit0>
         <Filename Value="BrowserManager.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -161,6 +162,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit3>
+      <Unit4>
+        <Filename Value="ufrmsettings.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FrmSettings"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit4>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

@@ -5,15 +5,13 @@ unit uglobal;
 interface
 
 uses
-  Windows, SysUtils, Registry;
+  Windows, SysUtils, Forms;
 
 const
-  AppName = 'KORNET Browser Manager';
-  AppMapName = 'Local\{D7588826-4DB4-48ED-BE33-0C797D7A45A4}';
+  AppName = 'TENROK Browser Manager';
+  AppMapName = 'Local\{C061573C-A5B2-4415-929F-ABFFF0221186}';
 
 function MyGetCommandline: Ansistring;
-function GetKClientPath(RootKey: HKEY; Key: String): String;
-function GetKClientPath: String;
 
 {$IFDEF UNICODE}
 function PrivateExtractIcons(szFileName: LPCTSTR; nIconIndex: Integer; cxIcon: Integer; cyIcon: Integer;
@@ -22,6 +20,10 @@ function PrivateExtractIcons(szFileName: LPCTSTR; nIconIndex: Integer; cxIcon: I
 function PrivateExtractIcons(szFileName: LPCTSTR; nIconIndex: Integer; cxIcon: Integer; cyIcon: Integer;
   phicon: PHANDLE; piconid: PUINT; nIcons: UINT; flags: UINT): UINT; stdcall; external 'user32.dll' Name 'PrivateExtractIconsA';
 {$ENDIF}
+
+var
+  AppVersion: String;
+  AppTitle: String;
 
 implementation
 
@@ -33,45 +35,52 @@ begin
     Result := '';
 end;
 
-// Возвращает путь к kclient.exe
-function GetKClientPath(RootKey: HKEY; Key: String): String;
+function GetBuildInfoString(var Major, Minor, Rev, Build: Word): String;
 var
-  Reg: TRegistry;
-  FileName: String;
-  InstallLocation, DisplayVersion: String;
+  VerInfoSize: DWORD;
+  VerInfo: Pointer;
+  VerValueSize: DWORD;
+  VerValue: PVSFixedFileInfo;
+  Dummy: DWORD;
 begin
+  Major := 0;
+  Minor := 0;
+  Rev := 0;
+  Build := 0;
   Result := '';
-  Reg := TRegistry.Create;
-  try
-    Reg.RootKey := RootKey;
-    if Reg.OpenKeyReadOnly(Key) then
-    begin
-      InstallLocation := IncludeTrailingBackslash(StringReplace(Reg.ReadString('InstallLocation'), '\\', '\', [rfReplaceAll]));
-      FileName := InstallLocation + 'kclient.exe';
-      if FileExists(FileName) then
-        Result := FileName
-      else
-      begin
-        DisplayVersion := Reg.ReadString('DisplayVersion');
-        FileName := InstallLocation + DisplayVersion + '\' + 'kclient.exe';
-        if FileExists(FileName) then
-          Result := FileName;
-      end;
-      Reg.CloseKey;
+  VerInfoSize := GetFileVersionInfoSize(PChar(Application.ExeName), Dummy);
+  if VerInfoSize > 0 then
+  begin
+    GetMem(VerInfo, VerInfoSize);
+    try
+      if GetFileVersionInfo(PChar(Application.ExeName), 0, VerInfoSize, VerInfo) then
+        if VerQueryValue(VerInfo, '\', Pointer(VerValue), VerValueSize) then
+        begin
+          with VerValue^ do
+          begin
+            Major := dwFileVersionMS shr 16;
+            Minor := dwFileVersionMS and $FFFF;
+            Rev := dwFileVersionLS shr 16;
+            Build := dwFileVersionLS and $FFFF;
+          end;
+          //Result := Format('%d.%d Build %d', [Major, Minor, Build]);
+          Result := Format('%d.%d.%d Build %d', [Major, Minor, Rev, Build]);
+        end;
+    finally
+      FreeMem(VerInfo, VerInfoSize);
     end;
-  finally
-    Reg.Free;
   end;
 end;
 
-function GetKClientPath: String;
-begin
-  Result := GetKClientPath(HKEY_CURRENT_USER, 'Software\Microsoft\Windows\CurrentVersion\Uninstall\KClient_is1');
-  if Result = '' then
-    Result := GetKClientPath(HKEY_LOCAL_MACHINE, 'Software\Microsoft\Windows\CurrentVersion\Uninstall\KClient_is1');
-  if Result = '' then
-    Result := GetKClientPath(HKEY_LOCAL_MACHINE, 'Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\KClient_is1');
-end;
+var
+  Major: Word;
+  Minor: Word;
+  Rev: Word;
+  Build: Word;
+
+initialization
+
+  AppVersion := GetBuildInfoString(Major, Minor, Rev, Build);
+  AppTitle := AppName + ' v' + AppVersion;
 
 end.
-

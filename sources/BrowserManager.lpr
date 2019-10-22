@@ -10,7 +10,8 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   Forms,
   ufrmmain,
   uglobal,
-  ufrmdialog;
+  ufrmdialog,
+  ufrmsettings;
 
 {$R *.res}
 
@@ -81,4 +82,3 @@ begin
 
   Application.Run;
 end.
-

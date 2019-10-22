@@ -10,17 +10,20 @@ uses
 type
   { TFrmMain }
   TFrmMain = class(TForm)
+    ActSettings: TAction;
     ActQuit: TAction;
     ActionList1: TActionList;
-    MenuItem1: TMenuItem;
+    MiQuit: TMenuItem;
+    MiSettings: TMenuItem;
     PopupMenu1: TPopupMenu;
     TrayIcon1: TTrayIcon;
     procedure ActQuitExecute(Sender: TObject);
+    procedure ActSettingsExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
     procedure GetBrowsers;
-    procedure ProcessCommandline(S: Ansistring);
+    procedure ProcessCommandline(Data: Ansistring);
   end;
 
 type
@@ -43,7 +46,7 @@ implementation
 {$R *.lfm}
 
 uses
-  Registry, uglobal, ufrmdialog, synacode;
+  Registry, uglobal, ufrmdialog, ufrmsettings;
 
 { TFrmMain }
 
@@ -52,19 +55,19 @@ var
 
 function WndCallback(Wnd: HWND; Msg: UINT; WParam: WPARAM; LParam: LPARAM): LRESULT; stdcall;
 var
-  S: String;
+  CopyData: TCopyDataStruct;
+  Data: String;
   Len: Integer;
-  CDS: TCopyDataStruct;
 begin
   Result := 0;
   case Msg of
     WM_COPYDATA:
     begin
-      CDS := PCopyDataStruct(LParam)^;
-      Len := CDS.cbData div SizeOf(Char);
-      SetLength(S, Len);
-      Move(PChar(CDS.lpData)^, PChar(S)^, Len * SizeOf(Char));
-      FrmMain.ProcessCommandline(S);
+      CopyData := PCopyDataStruct(LParam)^;
+      Len := CopyData.cbData div SizeOf(Char);
+      SetLength(Data, Len);
+      Move(PChar(CopyData.lpData)^, PChar(Data)^, Len * SizeOf(Char));
+      FrmMain.ProcessCommandline(Data);
       Result := 1;
       Exit;
     end;
@@ -74,7 +77,8 @@ end;
 
 procedure TFrmMain.FormCreate(Sender: TObject);
 begin
-  Caption := uglobal.AppName;
+  Caption := Application.Title;
+  TrayIcon1.Hint := uglobal.AppTitle;
 
   Browsers := TThreadList.Create;
 
@@ -90,6 +94,18 @@ end;
 procedure TFrmMain.ActQuitExecute(Sender: TObject);
 begin
   Self.Close;
+end;
+
+procedure TFrmMain.ActSettingsExecute(Sender: TObject);
+begin
+  with TFrmSettings.Create(Self) do
+  begin
+    if ShowModal = mrOk then
+    begin
+      //*
+    end;
+    Free;
+  end;
 end;
 
 procedure TFrmMain.FormDestroy(Sender: TObject);
@@ -174,44 +190,32 @@ begin
   end;
 end;
 
-procedure TFrmMain.ProcessCommandline(S: Ansistring);
+procedure TFrmMain.ProcessCommandline(Data: Ansistring);
 var
-  FrmDialog: TFrmDialog;
   List: TList;
   I: Integer;
   B: TBrowser;
   LI: TListItem;
-  Prog: string;
 begin
-  if S <> '' then
+  if Data <> '' then
   begin
-    FrmDialog := TFrmDialog.Create(Self);
-    FrmDialog.LabeledEdit1.Text := S;
-    List := Browsers.LockList;
-    try
-      for I := 0 to List.Count - 1 do
-      begin
-        B := TBrowser(List.Items[I]);
-        LI := FrmDialog.ListView1.Items.Add;
-        LI.Caption := B.Name;
-        LI.SubItems.Add(B.ExePath);
-        LI.ImageIndex := FrmDialog.ImageList1.AddIcon(B.Icon);
-      end;
-    finally
-       Browsers.UnlockList;
-    end;
-    if FrmDialog.ShowModal = mrOK then
+    with TFrmDialog.Create(Self) do
     begin
-      LI := FrmDialog.ListView1.Selected;
-      if LI <> nil then
-      begin
-        S := EncodeUrl(S);
-        Prog := LI.SubItems[0];
-        if ShellExecute(0, 'open', PChar(Prog), PChar(S), PChar(ExtractFilePath(Prog)), 1) > 32 then // успех
+      LabeledEdit1.Text := Data;
+      List := Browsers.LockList;
+      try
+        for I := 0 to List.Count - 1 do
         begin
-          // если возвращается число в диапазоне 0..32, то значит ошибка
+          B := TBrowser(List.Items[I]);
+          LI := LvBrowsers.Items.Add;
+          LI.Caption := B.Name;
+          LI.SubItems.Add(B.ExePath);
+          LI.ImageIndex := ImageList1.AddIcon(B.Icon);
         end;
+      finally
+        Browsers.UnlockList;
       end;
+      Show;
     end;
   end;
 end;
@@ -230,7 +234,7 @@ var
   hIcon: THandle;
   nIconId: DWORD;
   M: TStringArray;
-  Images: array[0..1] of string = ('ico', 'png');
+  Images: array[0..1] of String = ('ico', 'png');
 begin
   inherited Create;
 

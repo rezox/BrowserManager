@@ -315,7 +315,6 @@ object FrmMain: TFrmMain
       0000FFFFFFFFFFFF0000FFFFFFFFFFFF0000FFFFFFFFFFFF0000FFFFFFFFFFFF
       0000
     }
-    Hint = 'TENROK Browser Manager'
     Visible = True
     left = 48
     top = 16
@@ -323,7 +322,10 @@ object FrmMain: TFrmMain
   object PopupMenu1: TPopupMenu
     left = 48
     top = 80
-    object MenuItem1: TMenuItem
+    object MiSettings: TMenuItem
+      Action = ActSettings
+    end
+    object MiQuit: TMenuItem
       Action = ActQuit
     end
   end
@@ -333,6 +335,10 @@ object FrmMain: TFrmMain
     object ActQuit: TAction
       Caption = 'Выход'
       OnExecute = ActQuitExecute
+    end
+    object ActSettings: TAction
+      Caption = 'Настройки'
+      OnExecute = ActSettingsExecute
     end
   end
 end
