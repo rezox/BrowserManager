@@ -115,8 +115,6 @@ const
 var
   List: TList;
   I: Integer;
-  KClientPath: String;
-  Founded: Boolean;
   Reg: TRegistry;
   Names: TStringList;
   S: String;
@@ -130,36 +128,6 @@ begin
     for I := List.Count - 1 downto 0 do
       TBrowser(List.Items[I]).Free;
     List.Clear;
-
-    // Заполняем
-    KClientPath := GetKClientPath(HKEY_CURRENT_USER, 'Software\Microsoft\Windows\CurrentVersion\Uninstall\KClient_is1');
-    if KClientPath <> '' then
-      List.Add(TBrowser.Create('KClient', KClientPath));
-
-    KClientPath := GetKClientPath(HKEY_LOCAL_MACHINE, 'Software\Microsoft\Windows\CurrentVersion\Uninstall\KClient_is1');
-    if KClientPath <> '' then
-      List.Add(TBrowser.Create('KClient', KClientPath));
-
-    KClientPath := GetKClientPath(HKEY_LOCAL_MACHINE, 'Software\Microsoft\Windows\CurrentVersion\Uninstall\KClient (x64)_is1');
-    if KClientPath <> '' then
-      List.Add(TBrowser.Create('KClient', KClientPath));
-
-    KClientPath := GetKClientPath(HKEY_LOCAL_MACHINE, 'Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\KClient_is1');
-    if KClientPath <> '' then
-    begin
-      // Проверяем наличие
-      Founded := False;
-      for I := List.Count - 1 downto 0 do
-      begin
-        if (TBrowser(List.Items[I]).ExePath = KClientPath) then
-        begin
-          Founded := True;
-          Break;
-        end;
-      end;
-      if not Founded then
-        List.Add(TBrowser.Create('KClient', KClientPath));
-    end;
 
     // Загружаем список браузеров из реестра.
     Reg := TRegistry.Create;
