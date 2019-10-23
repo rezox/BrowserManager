@@ -325,19 +325,19 @@ object FrmMain: TFrmMain
     object MiSettings: TMenuItem
       Action = ActSettings
     end
-    object MiQuit: TMenuItem
-      Action = ActQuit
+    object MiExit: TMenuItem
+      Action = ActExit
     end
   end
   object ActionList1: TActionList
     left = 120
     top = 80
-    object ActQuit: TAction
-      Caption = 'Выход'
-      OnExecute = ActQuitExecute
+    object ActExit: TAction
+      Caption = 'Exit'
+      OnExecute = ActExitExecute
     end
     object ActSettings: TAction
-      Caption = 'Настройки'
+      Caption = 'Settings'
       OnExecute = ActSettingsExecute
     end
   end

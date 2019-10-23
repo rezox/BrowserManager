@@ -11,13 +11,13 @@ type
   { TFrmMain }
   TFrmMain = class(TForm)
     ActSettings: TAction;
-    ActQuit: TAction;
+    ActExit: TAction;
     ActionList1: TActionList;
-    MiQuit: TMenuItem;
+    MiExit: TMenuItem;
     MiSettings: TMenuItem;
     PopupMenu1: TPopupMenu;
     TrayIcon1: TTrayIcon;
-    procedure ActQuitExecute(Sender: TObject);
+    procedure ActExitExecute(Sender: TObject);
     procedure ActSettingsExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -27,7 +27,6 @@ type
   end;
 
 type
-  // Элемент списка Browsers
   TBrowser = class
     Name: String;
     ExePath: String;
@@ -87,11 +86,10 @@ begin
   // WM_COPYDATA
   PrevWndProc := Windows.WNDPROC(SetWindowLongPtr(Self.Handle, GWL_WNDPROC, PtrInt(@WndCallback)));
 
-  // Обрабатываем параметры текущей командной строки.
   ProcessCommandline(MyGetCommandline);
 end;
 
-procedure TFrmMain.ActQuitExecute(Sender: TObject);
+procedure TFrmMain.ActExitExecute(Sender: TObject);
 begin
   Self.Close;
 end;
@@ -113,7 +111,6 @@ var
   List: TList;
   I: Integer;
 begin
-  // Очищаем список
   List := Browsers.LockList;
   try
     for I := List.Count - 1 downto 0 do
@@ -140,12 +137,10 @@ var
 begin
   List := Browsers.LockList;
   try
-    // Очищаем список
     for I := List.Count - 1 downto 0 do
       TBrowser(List.Items[I]).Free;
     List.Clear;
 
-    // Загружаем список браузеров из реестра.
     Reg := TRegistry.Create;
     try
       Reg.RootKey := HKEY_LOCAL_MACHINE;
@@ -160,18 +155,18 @@ begin
           S := Key + Names[I] + '\';
           if Reg.OpenKeyReadOnly(S) then
           begin
-            sName := Reg.ReadString(''); // Имя браузера
+            sName := Reg.ReadString('');
             Reg.CloseKey;
 
             if Reg.OpenKeyReadOnly(S + 'sDefaultIcon') then
             begin
-              sDefaultIcon := Reg.ReadString(''); // Иконка
+              sDefaultIcon := Reg.ReadString('');
               Reg.CloseKey;
             end;
 
             if Reg.OpenKeyReadOnly(S + 'shell\open\command') then
             begin
-              sExePath := Reg.ReadString('').Trim(['"']); // Путь для запуска
+              sExePath := Reg.ReadString('').Trim(['"']);
               Reg.CloseKey;
             end;
 

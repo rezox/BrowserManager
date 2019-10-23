@@ -38,6 +38,7 @@ Name: "{group}\{#AppVerName}"; Filename: "{app}\{#AppExeName}"; WorkingDir: "{ap
 ;Name: "{commondesktop}\{#AppVerName}"; Filename: "{app}\{#AppExeName}"; WorkingDir: "{app}"
 
 [Languages]
+Name: "en"; MessagesFile: "compiler:Default.isl"
 Name: "ru"; MessagesFile: "compiler:Languages\Russian.isl"
 
 [Registry]

@@ -1,7 +1,7 @@
 object FrmDialog: TFrmDialog
-  Left = 618
+  Left = 359
   Height = 453
-  Top = 313
+  Top = 149
   Width = 726
   Caption = 'FrmDialog'
   ClientHeight = 453
@@ -18,8 +18,8 @@ object FrmDialog: TFrmDialog
     Width = 613
     Anchors = [akTop, akLeft, akRight]
     EditLabel.Height = 15
-    EditLabel.Width = 93
-    EditLabel.Caption = 'Открыть ссылку:'
+    EditLabel.Width = 54
+    EditLabel.Caption = 'Open link:'
     EditLabel.ParentColor = False
     EditLabel.Layout = tlCenter
     LabelPosition = lpLeft
@@ -36,11 +36,11 @@ object FrmDialog: TFrmDialog
     Columns = <    
       item
         AutoSize = True
-        Caption = 'Браузер'
-        Width = 59
+        Caption = 'Browser'
+        Width = 57
       end    
       item
-        Caption = 'Путь к исполняемому файлу'
+        Caption = 'Path to executable file'
         Width = 646
       end>
     HideSelection = False
@@ -56,20 +56,20 @@ object FrmDialog: TFrmDialog
     Left = 8
     Height = 19
     Top = 420
-    Width = 146
+    Width = 136
     Anchors = [akLeft, akBottom]
-    Caption = 'Запомнить мой выбор'
+    Caption = 'Remember my choice'
     Enabled = False
     TabOrder = 2
   end
-  object BtnOK: TButton
+  object BtnGo: TButton
     Left = 552
     Height = 25
     Top = 418
     Width = 75
     Anchors = [akRight, akBottom]
-    Caption = 'Запустить'
-    OnClick = BtnOKClick
+    Caption = 'Go!'
+    OnClick = BtnGoClick
     TabOrder = 3
   end
   object BtnCancel: TButton
@@ -78,7 +78,7 @@ object FrmDialog: TFrmDialog
     Top = 417
     Width = 75
     Anchors = [akRight, akBottom]
-    Caption = 'Отмена'
+    Caption = 'Cancel'
     OnClick = BtnCancelClick
     TabOrder = 4
   end

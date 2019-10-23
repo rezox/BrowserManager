@@ -20,7 +20,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="7"/>
+      <BuildNr Value="9"/>
       <StringTable CompanyName="TENROK" FileDescription="Browser Manager" InternalName="BrowserManager" OriginalFilename="BrowserManager.exe" ProductName="BrowserManager" ProductVersion="1.0.1"/>
     </VersionInfo>
     <BuildModes Count="4">

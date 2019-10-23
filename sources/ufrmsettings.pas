@@ -33,7 +33,7 @@ var
   I: Integer;
   TreeNode: TTreeNode;
 begin
-  Caption := Application.Title + ' - Настройки';
+  Caption := Application.Title + ' - Settings';
 
   PageControl1.ShowTabs := False;
 
