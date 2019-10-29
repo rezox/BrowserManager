@@ -24,6 +24,7 @@ function PrivateExtractIcons(szFileName: LPCTSTR; nIconIndex: Integer; cxIcon: I
 var
   AppVersion: String;
   AppTitle: String;
+  AppDataPath: String;
 
 implementation
 
@@ -82,5 +83,11 @@ initialization
 
   AppVersion := GetBuildInfoString(Major, Minor, Rev, Build);
   AppTitle := AppName + ' v' + AppVersion;
+  AppDataPath := IncludeTrailingBackslash(SysUtils.GetEnvironmentVariable('APPDATA')) + 'TENROK\Browser Manager\';
+  if not ForceDirectories(AppDataPath) then
+  begin
+    AppDataPath := ExtractFilePath(Application.ExeName) + 'data\';
+    ForceDirectories(AppDataPath);
+  end;
 
 end.

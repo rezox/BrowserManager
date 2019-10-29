@@ -13,6 +13,7 @@ type
     BtnGo: TButton;
     BtnCancel: TButton;
     CheckBox1: TCheckBox;
+    ComboBox1: TComboBox;
     ImageList1: TImageList;
     LabeledEdit1: TLabeledEdit;
     LvBrowsers: TListView;

@@ -5,7 +5,8 @@ unit ufrmmain;
 interface
 
 uses
-  Windows, Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls, StdCtrls, Menus, ActnList, StrUtils;
+  Windows, Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls, StdCtrls, Menus, ActnList, StrUtils,
+  sqlite3conn, sqldb, sqlite3dyn, db;
 
 type
   { TFrmMain }
@@ -16,6 +17,9 @@ type
     MiExit: TMenuItem;
     MiSettings: TMenuItem;
     PopupMenu1: TPopupMenu;
+    SQLite3Connection1: TSQLite3Connection;
+    SQLQuery1: TSQLQuery;
+    SQLTransaction1: TSQLTransaction;
     TrayIcon1: TTrayIcon;
     procedure ActExitExecute(Sender: TObject);
     procedure ActSettingsExecute(Sender: TObject);
@@ -39,6 +43,9 @@ type
 var
   FrmMain: TFrmMain;
   Browsers: TThreadList;
+
+const
+  C_DbVersion = 'db.version';
 
 implementation
 
@@ -75,13 +82,77 @@ begin
 end;
 
 procedure TFrmMain.FormCreate(Sender: TObject);
+var
+  bCreateTables: Boolean;
+  List: TList;
+  I: Integer;
+  B: TBrowser;
+  MS: TMemoryStream;
 begin
   Caption := Application.Title;
   TrayIcon1.Hint := uglobal.AppTitle;
 
+  SQLiteDefaultLibrary := 'sqlite3.dll';
+
+  // Create or connect to database
+  SQLite3Connection1.DatabaseName := uglobal.AppDataPath + 'main.db';
+  bCreateTables := not FileExists(SQLite3Connection1.DatabaseName);
+  SQLite3Connection1.Open;
+  SQLTransaction1.Active := True;
+  if bCreateTables then
+  begin
+    // Create system table
+    SQLite3Connection1.ExecuteDirect('CREATE TABLE `system` (`name` TEXT, `value` TEXT, UNIQUE (`name`) ON CONFLICT REPLACE);');
+    //SQLTransaction1.Commit;
+
+    // Insert version of DB schema
+    SQLite3Connection1.ExecuteDirect('INSERT INTO `system` (`name`, `value`) VALUES ("' + C_DbVersion + '", "1");');
+    //SQLTransaction1.Commit;
+
+    // Create table for settings
+    SQLite3Connection1.ExecuteDirect('CREATE TABLE `settings` (`name` TEXT, `value` TEXT, UNIQUE (`name`) ON CONFLICT REPLACE);');
+    //SQLTransaction1.Commit;
+
+    // Create table for browsers
+    SQLite3Connection1.ExecuteDirect('CREATE TABLE `browsers` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `name` TEXT, ' +
+      '`path` TEXT, `icon` BLOB, UNIQUE (`path`) ON CONFLICT IGNORE);');
+    //SQLTransaction1.Commit;
+
+    // Create table for rules
+    SQLite3Connection1.ExecuteDirect('CREATE TABLE `rules` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `url` TEXT, ' +
+      '`browser_id` INTEGER NOT NULL DEFAULT 0);');
+    SQLTransaction1.Commit;
+  end
+  else
+  begin
+    // Here scripts for check and upgrade DB schema
+  end;
+
   Browsers := TThreadList.Create;
 
+  // Fill browsers list
   GetBrowsers;
+
+  // Insert browsers in database
+  List := Browsers.LockList;
+  try
+    for I := 0 to List.Count - 1 do
+    begin
+      B := TBrowser(List.Items[I]);
+      MS := TMemoryStream.Create;
+      B.Icon.SaveToStream(MS);
+      SQLQuery1.SQL.Text := 'INSERT INTO `browsers` (`name`, `path`, `icon`) VALUES (:name, :path, :icon);';
+      SQLQuery1.Params.ParseSQL(SQLQuery1.SQL.Text, True);
+      SQLQuery1.Params.ParamByName('name').Value := B.Name;
+      SQLQuery1.Params.ParamByName('path').Value := B.ExePath;
+      SQLQuery1.Params.ParamByName('icon').LoadFromStream(MS, ftBlob);
+      SQLQuery1.ExecSQL();
+      MS.Free;
+    end;
+  finally
+    Browsers.UnlockList;
+  end;
+  SQLTransaction1.Commit;
 
   // WM_COPYDATA
   PrevWndProc := Windows.WNDPROC(SetWindowLongPtr(Self.Handle, GWL_WNDPROC, PtrInt(@WndCallback)));

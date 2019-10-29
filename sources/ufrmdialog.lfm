@@ -23,7 +23,6 @@ object FrmDialog: TFrmDialog
     EditLabel.ParentColor = False
     EditLabel.Layout = tlCenter
     LabelPosition = lpLeft
-    ReadOnly = True
     TabOrder = 0
   end
   object LvBrowsers: TListView
@@ -40,7 +39,7 @@ object FrmDialog: TFrmDialog
         Width = 57
       end    
       item
-        Caption = 'Path to executable file'
+        Caption = 'Path to executable'
         Width = 646
       end>
     HideSelection = False
@@ -56,10 +55,11 @@ object FrmDialog: TFrmDialog
     Left = 8
     Height = 19
     Top = 420
-    Width = 136
+    Width = 98
     Anchors = [akLeft, akBottom]
-    Caption = 'Remember my choice'
-    Enabled = False
+    Caption = 'Create rule for:'
+    Checked = True
+    State = cbChecked
     TabOrder = 2
   end
   object BtnGo: TButton
@@ -70,17 +70,32 @@ object FrmDialog: TFrmDialog
     Anchors = [akRight, akBottom]
     Caption = 'Go!'
     OnClick = BtnGoClick
-    TabOrder = 3
+    TabOrder = 4
   end
   object BtnCancel: TButton
     Left = 639
     Height = 25
-    Top = 417
+    Top = 418
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = 'Cancel'
     OnClick = BtnCancelClick
-    TabOrder = 4
+    TabOrder = 5
+  end
+  object ComboBox1: TComboBox
+    Left = 119
+    Height = 23
+    Top = 418
+    Width = 100
+    ItemHeight = 15
+    ItemIndex = 0
+    Items.Strings = (
+      'site'
+      'page'
+    )
+    Style = csDropDownList
+    TabOrder = 3
+    Text = 'site'
   end
   object ImageList1: TImageList
     Height = 48

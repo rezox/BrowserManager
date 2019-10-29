@@ -29,7 +29,8 @@ WizardImageFile=compiler:WizModernImage-IS.bmp
 WizardSmallImageFile=compiler:WizModernSmallImage-IS.bmp
 
 [Files]
-Source: "..\build\win64\{#AppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\build\win32\{#AppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\build\win32\*.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{#AppVerName}"; Filename: "{app}\{#AppExeName}"; WorkingDir: "{app}"

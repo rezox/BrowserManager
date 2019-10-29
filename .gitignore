@@ -1,2 +1,8 @@
-/build
+# Ignore all files in sub-directories
+/build/**/*.*
+
+# Include libraries
+!/build/**/*.dll
+
+# Ignore executables
 /install/*.exe
