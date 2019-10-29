@@ -1,11 +1,10 @@
 object FrmMain: TFrmMain
-  Left = 357
+  Left = 258
   Height = 324
-  Top = 163
+  Top = 117
   Width = 444
   Caption = 'FrmMain'
   OnCreate = FormCreate
-  OnDestroy = FormDestroy
   Position = poScreenCenter
   LCLVersion = '2.0.4.0'
   object TrayIcon1: TTrayIcon

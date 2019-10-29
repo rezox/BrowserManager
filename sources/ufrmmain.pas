@@ -6,7 +6,7 @@ interface
 
 uses
   Windows, Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls, StdCtrls, Menus, ActnList, StrUtils,
-  sqlite3conn, sqldb, sqlite3dyn, db;
+  sqlite3conn, sqldb, sqlite3dyn, DB;
 
 type
   { TFrmMain }
@@ -24,25 +24,15 @@ type
     procedure ActExitExecute(Sender: TObject);
     procedure ActSettingsExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
   private
     procedure GetBrowsers;
     procedure ProcessCommandline(Data: Ansistring);
-  end;
-
-type
-  TBrowser = class
-    Name: String;
-    ExePath: String;
-    Icon: TIcon;
   public
-    constructor Create(AName: String; AExePath: String; ADefaultIcon: String = '');
-    destructor Destroy; override;
+    procedure CreateRule(URL: String; BrowserId: String);
   end;
 
 var
   FrmMain: TFrmMain;
-  Browsers: TThreadList;
 
 const
   C_DbVersion = 'db.version';
@@ -52,7 +42,7 @@ implementation
 {$R *.lfm}
 
 uses
-  Registry, uglobal, ufrmdialog, ufrmsettings;
+  Registry, synacode, synautil, uglobal, ufrmdialog, ufrmsettings;
 
 { TFrmMain }
 
@@ -84,10 +74,6 @@ end;
 procedure TFrmMain.FormCreate(Sender: TObject);
 var
   bCreateTables: Boolean;
-  List: TList;
-  I: Integer;
-  B: TBrowser;
-  MS: TMemoryStream;
 begin
   Caption := Application.Title;
   TrayIcon1.Hint := uglobal.AppTitle;
@@ -102,25 +88,29 @@ begin
   if bCreateTables then
   begin
     // Create system table
-    SQLite3Connection1.ExecuteDirect('CREATE TABLE `system` (`name` TEXT, `value` TEXT, UNIQUE (`name`) ON CONFLICT REPLACE);');
-    //SQLTransaction1.Commit;
+    SQLQuery1.SQL.Text := 'CREATE TABLE `system` (`name` TEXT, `value` TEXT, UNIQUE (`name`) ON CONFLICT REPLACE);';
+    SQLQuery1.ExecSQL;
 
     // Insert version of DB schema
-    SQLite3Connection1.ExecuteDirect('INSERT INTO `system` (`name`, `value`) VALUES ("' + C_DbVersion + '", "1");');
-    //SQLTransaction1.Commit;
+    SQLQuery1.SQL.Text := 'INSERT INTO `system` (`name`, `value`) VALUES (:name, :value);';
+    SQLQuery1.Params.ParseSQL(SQLQuery1.SQL.Text, True);
+    SQLQuery1.Params.ParamByName('name').Value := C_DbVersion;
+    SQLQuery1.Params.ParamByName('value').Value := '1';
+    SQLQuery1.ExecSQL;
 
     // Create table for settings
-    SQLite3Connection1.ExecuteDirect('CREATE TABLE `settings` (`name` TEXT, `value` TEXT, UNIQUE (`name`) ON CONFLICT REPLACE);');
-    //SQLTransaction1.Commit;
+    SQLQuery1.SQL.Text := 'CREATE TABLE `settings` (`name` TEXT, `value` TEXT, UNIQUE (`name`) ON CONFLICT REPLACE);';
+    SQLQuery1.ExecSQL;
 
     // Create table for browsers
-    SQLite3Connection1.ExecuteDirect('CREATE TABLE `browsers` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `name` TEXT, ' +
-      '`path` TEXT, `icon` BLOB, UNIQUE (`path`) ON CONFLICT IGNORE);');
-    //SQLTransaction1.Commit;
+    SQLQuery1.SQL.Text := 'CREATE TABLE `browsers` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, ' +
+      '`path` TEXT, `icon` BLOB, UNIQUE (`path`) ON CONFLICT IGNORE);';
+    SQLQuery1.ExecSQL;
 
     // Create table for rules
-    SQLite3Connection1.ExecuteDirect('CREATE TABLE `rules` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `url` TEXT, ' +
-      '`browser_id` INTEGER NOT NULL DEFAULT 0);');
+    SQLQuery1.SQL.Text := 'CREATE TABLE `rules` (`url` TEXT PRIMARY KEY, `browser_id` INTEGER NOT NULL);';
+    SQLQuery1.ExecSQL;
+
     SQLTransaction1.Commit;
   end
   else
@@ -128,31 +118,8 @@ begin
     // Here scripts for check and upgrade DB schema
   end;
 
-  Browsers := TThreadList.Create;
-
-  // Fill browsers list
+  // Get browsers and insert into DB
   GetBrowsers;
-
-  // Insert browsers in database
-  List := Browsers.LockList;
-  try
-    for I := 0 to List.Count - 1 do
-    begin
-      B := TBrowser(List.Items[I]);
-      MS := TMemoryStream.Create;
-      B.Icon.SaveToStream(MS);
-      SQLQuery1.SQL.Text := 'INSERT INTO `browsers` (`name`, `path`, `icon`) VALUES (:name, :path, :icon);';
-      SQLQuery1.Params.ParseSQL(SQLQuery1.SQL.Text, True);
-      SQLQuery1.Params.ParamByName('name').Value := B.Name;
-      SQLQuery1.Params.ParamByName('path').Value := B.ExePath;
-      SQLQuery1.Params.ParamByName('icon').LoadFromStream(MS, ftBlob);
-      SQLQuery1.ExecSQL();
-      MS.Free;
-    end;
-  finally
-    Browsers.UnlockList;
-  end;
-  SQLTransaction1.Commit;
 
   // WM_COPYDATA
   PrevWndProc := Windows.WNDPROC(SetWindowLongPtr(Self.Handle, GWL_WNDPROC, PtrInt(@WndCallback)));
@@ -177,167 +144,207 @@ begin
   end;
 end;
 
-procedure TFrmMain.FormDestroy(Sender: TObject);
-var
-  List: TList;
-  I: Integer;
-begin
-  List := Browsers.LockList;
-  try
-    for I := List.Count - 1 downto 0 do
-      TBrowser(List.Items[I]).Free;
-    List.Clear;
-  finally
-    Browsers.UnlockList;
-  end;
-  Browsers.Free;
-end;
-
-procedure TFrmMain.GetBrowsers;
-const
-  Key = 'SOFTWARE\Clients\StartMenuInternet\';
-var
-  List: TList;
-  I: Integer;
-  Reg: TRegistry;
-  Names: TStringList;
-  S: String;
-  sName: String;
-  sDefaultIcon: String = '';
-  sExePath: String;
-begin
-  List := Browsers.LockList;
-  try
-    for I := List.Count - 1 downto 0 do
-      TBrowser(List.Items[I]).Free;
-    List.Clear;
-
-    Reg := TRegistry.Create;
-    try
-      Reg.RootKey := HKEY_LOCAL_MACHINE;
-      if Reg.OpenKeyReadOnly(Key) then
-      begin
-        Names := TStringList.Create;
-        Reg.GetKeyNames(Names);
-        Reg.CloseKey;
-
-        for I := 0 to Names.Count - 1 do
-        begin
-          S := Key + Names[I] + '\';
-          if Reg.OpenKeyReadOnly(S) then
-          begin
-            sName := Reg.ReadString('');
-            Reg.CloseKey;
-
-            if Reg.OpenKeyReadOnly(S + 'sDefaultIcon') then
-            begin
-              sDefaultIcon := Reg.ReadString('');
-              Reg.CloseKey;
-            end;
-
-            if Reg.OpenKeyReadOnly(S + 'shell\open\command') then
-            begin
-              sExePath := Reg.ReadString('').Trim(['"']);
-              Reg.CloseKey;
-            end;
-
-            List.Add(TBrowser.Create(sName, sExePath, sDefaultIcon));
-          end;
-        end;
-
-        Names.Free;
-      end;
-    finally
-      Reg.Free;
-    end;
-
-  finally
-    Browsers.UnlockList;
-  end;
-end;
-
 procedure TFrmMain.ProcessCommandline(Data: Ansistring);
 var
-  List: TList;
-  I: Integer;
-  B: TBrowser;
+  sUrl, sProt, sUser, sPass, sHost, sPort, sPath, sPara: String;
+  bFounded: Boolean;
+  Prog: String;
   LI: TListItem;
+  MS: TMemoryStream;
+  BlobField: TBlobField;
+  Ico: TIcon;
 begin
   if Data <> '' then
   begin
+    sUrl := EncodeUrl(Data);
+    ParseURL(sUrl, sProt, sUser, sPass, sHost, sPort, sPath, sPara);
+
+    // Find rule
+    SQLQuery1.SQL.Text := 'SELECT r.*, b.name, b."path" FROM rules r ' +
+      'INNER JOIN browsers b ON (b.id = r.browser_id) ' +
+      'WHERE r.url = :url OR r.url = :host';
+    SQLQuery1.Params.ParseSQL(SQLQuery1.SQL.Text, True);
+    SQLQuery1.Params.ParamByName('url').Value := sUrl;
+    SQLQuery1.Params.ParamByName('host').Value := sHost;
+    SQLQuery1.ExecSQL;
+    SQLQuery1.Open;
+    bFounded := not SQLQuery1.EOF;
+    if bFounded then
+    begin
+      SQLQuery1.First;
+      Prog := SQLQuery1.FieldByName('path').AsString;
+      if ShellExecute(0, 'open', PChar(Prog), PChar(sUrl), PChar(ExtractFilePath(Prog)), 1) > 32 then
+      begin
+        // Error
+      end;
+    end;
+    SQLQuery1.Close;
+
+    if bFounded then
+      Exit;
+
     with TFrmDialog.Create(Self) do
     begin
-      LabeledEdit1.Text := Data;
-      List := Browsers.LockList;
-      try
-        for I := 0 to List.Count - 1 do
-        begin
-          B := TBrowser(List.Items[I]);
-          LI := LvBrowsers.Items.Add;
-          LI.Caption := B.Name;
-          LI.SubItems.Add(B.ExePath);
-          LI.ImageIndex := ImageList1.AddIcon(B.Icon);
+      EdURL.Text := Data;
+
+      // Load browsers from DB
+      SQLQuery1.SQL.Text := 'SELECT * FROM `browsers`';
+      SQLQuery1.Params.Clear;
+      SQLQuery1.ExecSQL;
+      SQLQuery1.Open;
+      while not SQLQuery1.EOF do
+      begin
+        LI := LvBrowsers.Items.Add;
+        LI.Caption := SQLQuery1.FieldByName('name').AsString;
+        LI.SubItems.Add(SQLQuery1.FieldByName('path').AsString);
+        LI.SubItems.Add(SQLQuery1.FieldByName('id').AsString); // Hidden column
+        // Load icon
+        MS := TMemoryStream.Create;
+        try
+          BlobField := SQLQuery1.FieldByName('icon') as TBlobField;
+          BlobField.SaveToStream(MS);
+          MS.Position := 0;
+          Ico := TIcon.Create;
+          Ico.LoadFromStream(MS);
+          LI.ImageIndex := ImageList1.AddIcon(Ico);
+          Ico.Free;
+        finally
+          MS.Free;
         end;
-      finally
-        Browsers.UnlockList;
+        SQLQuery1.Next;
       end;
+      SQLQuery1.Close;
+
+      // Show form
       Show;
     end;
   end;
 end;
-
-{ TBrowser }
 
 Operator in (const AText: String; const AValues: array of String): Boolean;
 begin
   Result := AnsiIndexStr(AText, AValues) <> -1;
 end;
 
-constructor TBrowser.Create(AName: String; AExePath: String; ADefaultIcon: String = '');
+procedure TFrmMain.GetBrowsers;
+const
+  Key = 'SOFTWARE\Clients\StartMenuInternet\';
 var
+  Reg: TRegistry;
+  Names: TStringList;
+  I: Integer;
+  SubKey: String;
+  sName: String;
+  sIcon: String = '';
+  sPath: String;
+  MS: TMemoryStream;
+  Ico: TIcon;
+  SA: TStringArray;
   FileName: String;
+  ImageTypes: array[0..1] of String = ('ico', 'png');
   nIconIndex: Integer = 0;
   hIcon: THandle;
   nIconId: DWORD;
-  M: TStringArray;
-  Images: array[0..1] of String = ('ico', 'png');
 begin
-  inherited Create;
+  Reg := TRegistry.Create;
+  try
+    Reg.RootKey := HKEY_LOCAL_MACHINE;
+    if Reg.OpenKeyReadOnly(Key) then
+    begin
+      Names := TStringList.Create;
+      Reg.GetKeyNames(Names);
+      Reg.CloseKey;
 
-  Name := AName;
-  ExePath := AExePath;
-  Icon := TIcon.Create;
-
-  if (ADefaultIcon <> '') then
-  begin
-    M := ADefaultIcon.Split(',');
-    FileName := M[0]; // TODO: Check if M[0] is image file
-    if Length(M) = 2 then
-      nIconIndex := StrToIntDef(M[1], 0);
-  end
-  else
-    FileName := ExePath;
-
-  if ExtractFileExt(FileName) in Images then
-  begin
-    Icon.LoadFromFile(FileName);
-  end
-  else
-  begin
-    if PrivateExtractIcons(LPCTSTR(FileName), nIconIndex, 48, 48, @hIcon, @nIconId, 1, LR_LOADFROMFILE) <> 0 then
-      try
-        Icon.Handle := hIcon;
-        //Icon.SaveToFile(ExtractFilePath(ParamStr(0)) + IntToStr(I) + '.ico');
-      finally
-        DestroyIcon(hIcon);
+      if Names.Count > 0 then
+      begin
+        SQLQuery1.SQL.Text := 'INSERT INTO `browsers` (`name`, `path`, `icon`) VALUES (:name, :path, :icon);';
+        SQLQuery1.Params.ParseSQL(SQLQuery1.SQL.Text, True);
       end;
+
+      for I := 0 to Names.Count - 1 do
+      begin
+        SubKey := Key + Names[I] + '\';
+        if Reg.OpenKeyReadOnly(SubKey) then
+        begin
+          sName := Reg.ReadString('');
+          Reg.CloseKey;
+
+          // Get default icon
+          if Reg.OpenKeyReadOnly(SubKey + 'DefaultIcon') then
+          begin
+            sIcon := Reg.ReadString('');
+            Reg.CloseKey;
+          end;
+
+          // Get executable path
+          if Reg.OpenKeyReadOnly(SubKey + 'shell\open\command') then
+          begin
+            sPath := Reg.ReadString('').Trim(['"']);
+            Reg.CloseKey;
+          end;
+
+          MS := TMemoryStream.Create;
+          try
+            Ico := TIcon.Create;
+            if sIcon <> '' then
+            begin
+              SA := sIcon.Split(',');
+              FileName := SA[0]; // TODO: Check if SA[0] is image file
+              if Length(SA) = 2 then
+                nIconIndex := StrToIntDef(SA[1], 0);
+            end
+            else
+            begin
+              FileName := sPath;
+            end;
+            if ExtractFileExt(FileName) in ImageTypes then
+            begin
+              Ico.LoadFromFile(FileName);
+            end
+            else
+            begin
+              if PrivateExtractIcons(LPCTSTR(FileName), nIconIndex, 48, 48, @hIcon, @nIconId, 1, LR_LOADFROMFILE) <> 0 then
+                try
+                  Ico.Handle := hIcon;
+                finally
+                  DestroyIcon(hIcon);
+                end;
+            end;
+            Ico.SaveToStream(MS);
+            Ico.Free;
+
+            MS.Position := 0;
+
+            SQLQuery1.Params.ParamByName('name').Value := sName;
+            SQLQuery1.Params.ParamByName('path').Value := sPath;
+            SQLQuery1.Params.ParamByName('icon').LoadFromStream(MS, ftBlob);
+            SQLQuery1.ExecSQL;
+
+          finally
+            MS.Free;
+          end;
+        end;
+      end;
+
+      if Names.Count > 0 then
+        SQLTransaction1.Commit;
+
+      Names.Free;
+    end;
+  finally
+    Reg.Free;
   end;
 end;
 
-destructor TBrowser.Destroy;
+procedure TFrmMain.CreateRule(URL: String; BrowserId: String);
 begin
-  Icon.Free;
-  inherited;
+  SQLQuery1.SQL.Text := 'INSERT INTO `rules` (`url`, `browser_id`) VALUES (:url, :browser_id) ' +
+    'ON CONFLICT(`url`) DO UPDATE SET `browser_id` = :browser_id';
+  SQLQuery1.Params.ParseSQL(SQLQuery1.SQL.Text, True);
+  SQLQuery1.Params.ParamByName('url').Value := URL;
+  SQLQuery1.Params.ParamByName('browser_id').Value := BrowserId;
+  SQLQuery1.ExecSQL;
+  SQLTransaction1.Commit;
 end;
 
 end.

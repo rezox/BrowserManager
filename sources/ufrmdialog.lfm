@@ -1,7 +1,7 @@
 object FrmDialog: TFrmDialog
-  Left = 359
+  Left = 563
   Height = 453
-  Top = 149
+  Top = 197
   Width = 726
   Caption = 'FrmDialog'
   ClientHeight = 453
@@ -11,15 +11,15 @@ object FrmDialog: TFrmDialog
   OnShow = FormShow
   Position = poScreenCenter
   LCLVersion = '2.0.4.0'
-  object LabeledEdit1: TLabeledEdit
+  object EdURL: TLabeledEdit
     Left = 104
     Height = 23
-    Top = 4
+    Top = 8
     Width = 613
     Anchors = [akTop, akLeft, akRight]
     EditLabel.Height = 15
-    EditLabel.Width = 54
-    EditLabel.Caption = 'Open link:'
+    EditLabel.Width = 56
+    EditLabel.Caption = 'Open URL:'
     EditLabel.ParentColor = False
     EditLabel.Layout = tlCenter
     LabelPosition = lpLeft
@@ -49,9 +49,10 @@ object FrmDialog: TFrmDialog
     SmallImages = ImageList1
     TabOrder = 1
     ViewStyle = vsReport
+    OnDblClick = LvBrowsersDblClick
     OnKeyDown = LvBrowsersKeyDown
   end
-  object CheckBox1: TCheckBox
+  object ChbCreateRule: TCheckBox
     Left = 8
     Height = 19
     Top = 420
@@ -59,6 +60,7 @@ object FrmDialog: TFrmDialog
     Anchors = [akLeft, akBottom]
     Caption = 'Create rule for:'
     Checked = True
+    OnChange = ChbCreateRuleChange
     State = cbChecked
     TabOrder = 2
   end
@@ -78,8 +80,8 @@ object FrmDialog: TFrmDialog
     Top = 418
     Width = 75
     Anchors = [akRight, akBottom]
+    Cancel = True
     Caption = 'Cancel'
-    OnClick = BtnCancelClick
     TabOrder = 5
   end
   object ComboBox1: TComboBox
@@ -90,12 +92,12 @@ object FrmDialog: TFrmDialog
     ItemHeight = 15
     ItemIndex = 0
     Items.Strings = (
-      'site'
+      'host'
       'page'
     )
     Style = csDropDownList
     TabOrder = 3
-    Text = 'site'
+    Text = 'host'
   end
   object ImageList1: TImageList
     Height = 48

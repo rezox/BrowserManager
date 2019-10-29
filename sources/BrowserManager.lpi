@@ -19,9 +19,9 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
-      <RevisionNr Value="1"/>
-      <BuildNr Value="10"/>
-      <StringTable CompanyName="TENROK" FileDescription="Browser Manager" InternalName="BrowserManager" OriginalFilename="BrowserManager.exe" ProductName="BrowserManager" ProductVersion="1.0.1"/>
+      <RevisionNr Value="2"/>
+      <BuildNr Value="11"/>
+      <StringTable CompanyName="TENROK" FileDescription="Browser Manager" InternalName="BrowserManager" OriginalFilename="BrowserManager.exe" ProductName="BrowserManager" ProductVersion="1.0"/>
     </VersionInfo>
     <BuildModes Count="4">
       <Item1 Name="Win32-Debug" Default="True"/>
