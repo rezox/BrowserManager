@@ -82,6 +82,7 @@ object FrmDialog: TFrmDialog
     Anchors = [akRight, akBottom]
     Cancel = True
     Caption = 'Cancel'
+    OnClick = BtnCancelClick
     TabOrder = 5
   end
   object ComboBox1: TComboBox

@@ -17,6 +17,7 @@ type
     ImageList1: TImageList;
     EdURL: TLabeledEdit;
     LvBrowsers: TListView;
+    procedure BtnCancelClick(Sender: TObject);
     procedure BtnGoClick(Sender: TObject);
     procedure ChbCreateRuleChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -88,6 +89,11 @@ begin
 
     Close;
   end;
+end;
+
+procedure TFrmDialog.BtnCancelClick(Sender: TObject);
+begin
+  Close;
 end;
 
 procedure TFrmDialog.ChbCreateRuleChange(Sender: TObject);
