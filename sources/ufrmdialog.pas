@@ -61,6 +61,13 @@ begin
   LI := LvBrowsers.Selected;
   if Assigned(LI) then
   begin
+    Prog := LI.SubItems[0];
+    if not FileExists(Prog) then
+    begin
+      MessageDlg(uglobal.AppTitle, 'Browser executable not found!', mtError, [mbOK], 0);
+      Exit;
+    end;
+
     sUrl := EncodeUrl(EdURL.Text);
 
     // Create rule
@@ -81,7 +88,7 @@ begin
     end;
 
     // Open URL in browser
-    Prog := LI.SubItems[0];
+
     if ShellExecute(0, 'open', PChar(Prog), PChar(sUrl), PChar(ExtractFilePath(Prog)), 1) > 32 then
     begin
       // Error
