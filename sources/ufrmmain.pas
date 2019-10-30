@@ -173,15 +173,18 @@ begin
     begin
       SQLQuery1.First;
       Prog := SQLQuery1.FieldByName('path').AsString;
-      if ShellExecute(0, 'open', PChar(Prog), PChar(sUrl), PChar(ExtractFilePath(Prog)), 1) > 32 then
-      begin
-        // Error
-      end;
+      bFounded := FileExists(Prog);
     end;
     SQLQuery1.Close;
 
     if bFounded then
+    begin
+      if ShellExecute(0, 'open', PChar(Prog), PChar(sUrl), PChar(ExtractFilePath(Prog)), 1) > 32 then
+      begin
+        // Error
+      end;
       Exit;
+    end;
 
     with TFrmDialog.Create(Self) do
     begin
@@ -282,6 +285,9 @@ begin
             sPath := Reg.ReadString('').Trim(['"']);
             Reg.CloseKey;
           end;
+
+          if not FileExists(sPath) then
+            Continue;
 
           MS := TMemoryStream.Create;
           try
