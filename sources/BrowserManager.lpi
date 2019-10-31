@@ -15,12 +15,22 @@
       </XPManifest>
       <Icon Value="0"/>
     </General>
+    <i18n>
+      <EnableI18N Value="True"/>
+      <OutDir Value="languages"/>
+      <ExcludedIdentifiers Count="4">
+        <Item1 Value="tfrmmain.caption"/>
+        <Item2 Value="tfrmdialog.caption"/>
+        <Item3 Value="tfrmsettings.caption"/>
+        <Item4 Value="tfrmsettings.label1.caption"/>
+      </ExcludedIdentifiers>
+    </i18n>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
-      <RevisionNr Value="3"/>
-      <BuildNr Value="12"/>
+      <RevisionNr Value="4"/>
+      <BuildNr Value="13"/>
       <StringTable CompanyName="TENROK" FileDescription="Browser Manager" InternalName="BrowserManager" OriginalFilename="BrowserManager.exe" ProductName="BrowserManager" ProductVersion="1.0"/>
     </VersionInfo>
     <BuildModes Count="4">

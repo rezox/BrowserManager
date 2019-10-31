@@ -1,0 +1,87 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Sergey Solodyagin <solodyagin@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.7\n"
+
+#: tfrmdialog.btncancel.caption
+msgctxt "tfrmdialog.btncancel.caption"
+msgid "Cancel"
+msgstr "Отмена"
+
+#: tfrmdialog.btngo.caption
+msgid "Go!"
+msgstr "Запуск!"
+
+#: tfrmdialog.chbcreaterule.caption
+#| msgid "Create rule for:"
+msgid "Create rule:"
+msgstr "Создать правило:"
+
+#: tfrmdialog.edurl.editlabel.caption
+msgid "Open URL:"
+msgstr "Открыть ссылку:"
+
+#: tfrmdialog.lvbrowsers.columns[0].caption
+msgid "Browser"
+msgstr "Браузер"
+
+#: tfrmdialog.lvbrowsers.columns[1].caption
+msgid "Path to executable"
+msgstr "Путь к исполняемому файлу"
+
+#: tfrmmain.actexit.caption
+msgid "Exit"
+msgstr "Выход"
+
+#: tfrmmain.actsettings.caption
+msgctxt "tfrmmain.actsettings.caption"
+msgid "Settings"
+msgstr "Настройки"
+
+#: tfrmsettings.btncancel.caption
+msgctxt "tfrmsettings.btncancel.caption"
+msgid "Cancel"
+msgstr "Отмена"
+
+#: tfrmsettings.btnok.caption
+msgid "OK"
+msgstr ""
+
+#: tfrmsettings.chkautorun.caption
+msgid "Start application on system startup"
+msgstr "Запустить приложение при старте системы"
+
+#: tfrmsettings.tabsheet1.caption
+msgid "General"
+msgstr "Основные"
+
+#: tfrmsettings.tabsheet2.caption
+msgid "Rules"
+msgstr "Правила"
+
+#: uglobal.rsbrowsernotfound
+msgid "Browser executable not found!"
+msgstr "Исполняемый файл браузера не найден!"
+
+#: uglobal.rsforhost
+#| msgid "host"
+msgctxt "uglobal.rsforhost"
+msgid "for host"
+msgstr "для хоста"
+
+#: uglobal.rsforpage
+#| msgid "page"
+msgid "for page"
+msgstr "для страницы"
+
+#: uglobal.rssettings
+msgctxt "uglobal.rssettings"
+msgid "Settings"
+msgstr "Настройки"

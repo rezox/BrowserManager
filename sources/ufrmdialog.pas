@@ -5,7 +5,7 @@ unit ufrmdialog;
 interface
 
 uses
-  Windows, Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, ComCtrls, StdCtrls;
+  Windows, Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, ComCtrls, StdCtrls, LCLTranslator;
 
 type
   { TFrmDialog }
@@ -38,7 +38,10 @@ uses
 
 procedure TFrmDialog.FormCreate(Sender: TObject);
 begin
-  Caption := uglobal.AppTitle;
+  Caption := AppTitle;
+  ComboBox1.Items.Add(rsForHost);
+  ComboBox1.Items.Add(rsForPage);
+  ComboBox1.ItemIndex := 0;
 end;
 
 procedure TFrmDialog.FormShow(Sender: TObject);
@@ -64,7 +67,7 @@ begin
     Prog := LI.SubItems[0];
     if not FileExists(Prog) then
     begin
-      MessageDlg(uglobal.AppTitle, 'Browser executable not found!', mtError, [mbOK], 0);
+      MessageDlg(AppTitle, rsBrowserNotFound, mtError, [mbOK], 0);
       Exit;
     end;
 

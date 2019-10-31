@@ -1,0 +1,5 @@
+{"version":1,"strings":[
+{"hash":227686334,"name":"tfrmmain.caption","sourcebytes":[70,114,109,77,97,105,110],"value":"FrmMain"},
+{"hash":315140,"name":"tfrmmain.actexit.caption","sourcebytes":[69,120,105,116],"value":"Exit"},
+{"hash":213582195,"name":"tfrmmain.actsettings.caption","sourcebytes":[83,101,116,116,105,110,103,115],"value":"Settings"}
+]}

@@ -5,7 +5,7 @@ unit ufrmsettings;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, ComCtrls, StdCtrls;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, ComCtrls, StdCtrls, LCLTranslator;
 
 type
   { TFrmSettings }
@@ -26,6 +26,9 @@ implementation
 
 {$R *.lfm}
 
+uses
+  uglobal;
+
 { TFrmSettings }
 
 procedure TFrmSettings.FormCreate(Sender: TObject);
@@ -33,7 +36,7 @@ var
   I: Integer;
   TreeNode: TTreeNode;
 begin
-  Caption := Application.Title + ' - Settings';
+  Caption := Application.Title + ' - ' + rsSettings;
 
   PageControl1.ShowTabs := False;
 

@@ -26,6 +26,12 @@ var
   AppTitle: String;
   AppDataPath: String;
 
+resourcestring
+  rsSettings = 'Settings';
+  rsForHost = 'for host';
+  rsForPage = 'for page';
+  rsBrowserNotFound = 'Browser executable not found!';
+
 implementation
 
 function MyGetCommandline: Ansistring;

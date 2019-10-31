@@ -6,7 +6,7 @@ interface
 
 uses
   Windows, Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls, StdCtrls, Menus, ActnList, StrUtils,
-  sqlite3conn, sqldb, sqlite3dyn, DB;
+  sqlite3conn, sqldb, sqlite3dyn, DB, LCLTranslator;
 
 type
   { TFrmMain }
@@ -75,8 +75,10 @@ procedure TFrmMain.FormCreate(Sender: TObject);
 var
   bCreateTables: Boolean;
 begin
+  SetDefaultLang(GetDefaultLang);
+
   Caption := Application.Title;
-  TrayIcon1.Hint := uglobal.AppTitle;
+  TrayIcon1.Hint := AppTitle;
 
   SQLiteDefaultLibrary := 'sqlite3.dll';
 

@@ -33,6 +33,7 @@ WizardSmallImageFile=compiler:WizModernSmallImage-IS.bmp
 [Files]
 Source: "..\build\win64\{#AppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\build\win64\*.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\sources\languages\*.*"; DestDir: "{app}\languages"
 
 [Icons]
 Name: "{group}\{#AppVerName}"; Filename: "{app}\{#AppExeName}"; WorkingDir: "{app}"
@@ -43,12 +44,15 @@ Name: "en"; MessagesFile: "compiler:Default.isl"
 Name: "ru"; MessagesFile: "compiler:Languages\Russian.isl"
 
 [Registry]
-Root: HKCR; Subkey: "BrowserManagerHTML"; ValueType: string; ValueName: ""; ValueData: "BrowserManager HTML Document"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "BrowserManagerHTML"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "BrowserManagerHTML"; ValueType: string; ValueName: ""; ValueData: "BrowserManager HTML Document"
 Root: HKCR; Subkey: "BrowserManagerHTML\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#AppExeName},0"                 
 Root: HKCR; Subkey: "BrowserManagerHTML\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#AppExeName}"" ""%1"""
-Root: HKCR; Subkey: "BrowserManagerURL"; ValueType: string; ValueName: ""; ValueData: "BrowserManager HTML Document"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "BrowserManagerURL"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "BrowserManagerURL"; ValueType: string; ValueName: ""; ValueData: "BrowserManager URL"
 Root: HKCR; Subkey: "BrowserManagerURL\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#AppExeName},0"                 
 Root: HKCR; Subkey: "BrowserManagerURL\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#AppExeName}"" ""%1"""
+Root: HKLM; Subkey: "Software\TENROK\{#AppName}"; Flags: uninsdeletekey
 Root: HKLM; Subkey: "Software\TENROK\{#AppName}\Capabilities"; ValueType: string; ValueName: "ApplicationDescription"; ValueData: "BrowserManager as default browser"
 Root: HKLM; Subkey: "Software\TENROK\{#AppName}\Capabilities"; ValueType: string; ValueName: "ApplicationIcon"; ValueData: "{app}\{#AppExeName},0"
 Root: HKLM; Subkey: "Software\TENROK\{#AppName}\Capabilities"; ValueType: string; ValueName: "ApplicationName"; ValueData: "{#AppName}"
@@ -57,8 +61,8 @@ Root: HKLM; Subkey: "Software\TENROK\{#AppName}\Capabilities\FileAssociations"; 
 Root: HKLM; Subkey: "Software\TENROK\{#AppName}\Capabilities\URLAssociations"; ValueType: string; ValueName: "http"; ValueData: "BrowserManagerURL"
 Root: HKLM; Subkey: "Software\TENROK\{#AppName}\Capabilities\URLAssociations"; ValueType: string; ValueName: "https"; ValueData: "BrowserManagerURL"
 Root: HKLM; Subkey: "Software\TENROK\{#AppName}\Capabilities\URLAssociations"; ValueType: string; ValueName: "ftp"; ValueData: "BrowserManagerURL"
-Root: HKLM; Subkey: "Software\TENROK\{#AppName}\Capabilities\Startmenu"; ValueType: string; ValueName: "StartMenuInternet"; ValueData: "{app}\{#AppExeName}"
-Root: HKLM; Subkey: "Software\RegisteredApplications"; ValueType: string; ValueName: "{#AppName}"; ValueData: "Software\TENROK\{#AppName}\Capabilities"
+Root: HKLM; Subkey: "Software\TENROK\{#AppName}\Capabilities\Startmenu"; ValueType: string; ValueName: "StartMenuInternet"; ValueData: "{#AppName}"
+Root: HKLM; Subkey: "Software\RegisteredApplications"; ValueType: string; ValueName: "{#AppName}"; ValueData: "Software\TENROK\{#AppName}\Capabilities"; Flags: uninsdeletevalue
 
 [Code]
 function GetUninstallString(): String;

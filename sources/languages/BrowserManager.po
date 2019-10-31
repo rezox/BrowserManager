@@ -1,0 +1,77 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: tfrmdialog.btncancel.caption
+msgctxt "tfrmdialog.btncancel.caption"
+msgid "Cancel"
+msgstr ""
+
+#: tfrmdialog.btngo.caption
+msgid "Go!"
+msgstr ""
+
+#: tfrmdialog.chbcreaterule.caption
+msgid "Create rule:"
+msgstr ""
+
+#: tfrmdialog.edurl.editlabel.caption
+msgid "Open URL:"
+msgstr ""
+
+#: tfrmdialog.lvbrowsers.columns[0].caption
+msgid "Browser"
+msgstr ""
+
+#: tfrmdialog.lvbrowsers.columns[1].caption
+msgid "Path to executable"
+msgstr ""
+
+#: tfrmmain.actexit.caption
+msgid "Exit"
+msgstr ""
+
+#: tfrmmain.actsettings.caption
+msgctxt "tfrmmain.actsettings.caption"
+msgid "Settings"
+msgstr ""
+
+#: tfrmsettings.btncancel.caption
+msgctxt "tfrmsettings.btncancel.caption"
+msgid "Cancel"
+msgstr ""
+
+#: tfrmsettings.btnok.caption
+msgid "OK"
+msgstr ""
+
+#: tfrmsettings.chkautorun.caption
+msgid "Start application on system startup"
+msgstr ""
+
+#: tfrmsettings.tabsheet1.caption
+msgid "General"
+msgstr ""
+
+#: tfrmsettings.tabsheet2.caption
+msgid "Rules"
+msgstr ""
+
+#: uglobal.rsbrowsernotfound
+msgid "Browser executable not found!"
+msgstr ""
+
+#: uglobal.rsforhost
+msgctxt "uglobal.rsforhost"
+msgid "for host"
+msgstr ""
+
+#: uglobal.rsforpage
+msgctxt "uglobal.rsforpage"
+msgid "for page"
+msgstr ""
+
+#: uglobal.rssettings
+msgctxt "uglobal.rssettings"
+msgid "Settings"
+msgstr ""
+
