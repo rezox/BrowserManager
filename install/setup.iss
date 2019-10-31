@@ -1,10 +1,20 @@
+#define GetEnvEx(str Name) Local[0] = GetEnv(Name), StringChange(Local[0], '"', '');
+#define ARCH GetEnvEx('ARCH')
+#if ARCH == ''
+	#pragma error 'Environment variable "ARCH" not exists'
+#endif
 #define AppCopyright       'Copyright (C) ' + GetDateTimeString('yyyy', '', '') + ' TENROK'
 #define AppName            'BrowserManager'
 #define AppExeName         'BrowserManager.exe'
-#define AppExePath         '..\build\win32\' + AppExeName
+#if ARCH == "x64"
+	#define AppExePath     '..\build\win64\' + AppExeName
+	#define AppVerName     AppName + ' (x64)'
+#else
+	#define AppExePath     '..\build\win32\' + AppExeName
+	#define AppVerName     AppName
+#endif
 #define AppVersion         GetFileVersion(AppExePath)
-#define AppVerName         AppName
-#define OutputBaseFilename StringChange(AppName, ' ', '') + '-' + AppVersion + '-x86'
+#define OutputBaseFilename StringChange(AppName, ' ', '') + '-' + AppVersion + '-' + ARCH
 
 [Setup]
 AppCopyright={#AppCopyright}
@@ -14,6 +24,10 @@ AppPublisher=TENROK
 AppPublisherURL=http://tenrok.ru
 AppVerName={#AppVerName}
 AppVersion={#AppVersion}
+#if ARCH == "x64"
+ArchitecturesAllowed=x64
+ArchitecturesInstallIn64BitMode=x64
+#endif
 DefaultDirName={commonpf}\TENROK\{#AppName}
 DefaultGroupName=TENROK\{#AppName}
 OutputBaseFilename={#OutputBaseFilename}
@@ -29,8 +43,13 @@ WizardImageFile=compiler:WizModernImage-IS.bmp
 WizardSmallImageFile=compiler:WizModernSmallImage-IS.bmp
 
 [Files]
+#if ARCH == "x64"
+Source: "..\build\win64\{#AppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\build\win64\*.dll"; DestDir: "{app}"; Flags: ignoreversion
+#else
 Source: "..\build\win32\{#AppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\build\win32\*.dll"; DestDir: "{app}"; Flags: ignoreversion
+#endif
 Source: "..\sources\languages\*.*"; DestDir: "{app}\languages"
 
 [Icons]
