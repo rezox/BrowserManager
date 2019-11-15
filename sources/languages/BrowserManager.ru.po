@@ -20,7 +20,6 @@ msgid "Go!"
 msgstr "Запуск!"
 
 #: tfrmdialog.chbcreaterule.caption
-#| msgid "Create rule for:"
 msgid "Create rule:"
 msgstr "Создать правило:"
 
@@ -58,6 +57,10 @@ msgstr ""
 msgid "Start application on system startup"
 msgstr "Запустить приложение при старте системы"
 
+#: tfrmsettings.chkstatecreaterule.caption
+msgid "The «Create Rule» checkbox is checked by default"
+msgstr "Включить флажок «Создать правило» по умолчанию"
+
 #: tfrmsettings.tabsheet1.caption
 msgid "General"
 msgstr "Основные"
@@ -71,13 +74,11 @@ msgid "Browser executable not found!"
 msgstr "Исполняемый файл браузера не найден!"
 
 #: uglobal.rsforhost
-#| msgid "host"
 msgctxt "uglobal.rsforhost"
 msgid "for host"
 msgstr "для хоста"
 
 #: uglobal.rsforpage
-#| msgid "page"
 msgid "for page"
 msgstr "для страницы"
 

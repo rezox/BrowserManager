@@ -24,6 +24,7 @@ type
     procedure ActExitExecute(Sender: TObject);
     procedure ActSettingsExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
     procedure GetBrowsers;
     procedure ProcessCommandline(Data: Ansistring);
@@ -33,9 +34,12 @@ type
 
 var
   FrmMain: TFrmMain;
+  Settings: TStringList;
 
 const
-  C_DbVersion = 'db.version';
+  // Settings names
+  SN_DbVersion = 'db.version';
+  SN_StateCreateRule = 'stateCreateRule';
 
 implementation
 
@@ -96,7 +100,7 @@ begin
     // Insert version of DB schema
     SQLQuery1.SQL.Text := 'INSERT INTO `system` (`name`, `value`) VALUES (:name, :value);';
     SQLQuery1.Params.ParseSQL(SQLQuery1.SQL.Text, True);
-    SQLQuery1.Params.ParamByName('name').Value := C_DbVersion;
+    SQLQuery1.Params.ParamByName('name').Value := SN_DbVersion;
     SQLQuery1.Params.ParamByName('value').Value := '1';
     SQLQuery1.ExecSQL;
 
@@ -120,6 +124,18 @@ begin
     // Here scripts for check and upgrade DB schema
   end;
 
+  // Load settings.
+  Settings := TStringList.Create;
+  SQLQuery1.SQL.Text := 'SELECT * FROM `settings`;';
+  SQLQuery1.ExecSQL;
+  SQLQuery1.Open;
+  while not SQLQuery1.EOF do
+  begin
+    Settings.Add(SQLQuery1.FieldByName('name').AsString + '=' + SQLQuery1.FieldByName('value').AsString);
+    SQLQuery1.Next;
+  end;
+  SQLQuery1.Close;
+
   // Get browsers and insert into DB
   GetBrowsers;
 
@@ -129,18 +145,41 @@ begin
   ProcessCommandline(MyGetCommandline);
 end;
 
+procedure TFrmMain.FormDestroy(Sender: TObject);
+begin
+  Settings.Free;
+end;
+
 procedure TFrmMain.ActExitExecute(Sender: TObject);
 begin
   Self.Close;
 end;
 
 procedure TFrmMain.ActSettingsExecute(Sender: TObject);
+var
+  Values: String;
+  I: Integer;
 begin
   with TFrmSettings.Create(Self) do
   begin
+    ChkStateCreateRule.Checked := StrToBoolDef(Settings.Values[SN_StateCreateRule], False);
     if ShowModal = mrOk then
     begin
-      //*
+      Settings.Values[SN_StateCreateRule] := BoolToStr(ChkStateCreateRule.Checked);
+
+      // Save settings
+      Values := '';
+      for I := 0 to Settings.Count - 1 do
+      begin
+        Values += '("' + Settings.Names[I] + '","' + Settings.ValueFromIndex[I] + '")';
+        if I <> Settings.Count - 1 then
+          Values += ',';
+      end;
+      if Values <> '' then
+      begin
+        SQLite3Connection1.ExecuteDirect('INSERT INTO `settings` (`name`, `value`) VALUES ' + Values + ';');
+        SQLTransaction1.Commit;
+      end;
     end;
     Free;
   end;

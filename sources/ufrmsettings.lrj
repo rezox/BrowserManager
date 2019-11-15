@@ -5,5 +5,6 @@
 {"hash":231000124,"name":"tfrmsettings.tabsheet1.caption","sourcebytes":[71,101,110,101,114,97,108],"value":"General"},
 {"hash":65163984,"name":"tfrmsettings.chkautorun.caption","sourcebytes":[83,116,97,114,116,32,97,112,112,108,105,99,97,116,105,111,110,32,111,110,32,115,121,115,116,101,109,32,115,116,97,114,116,117,112],"value":"Start application on system startup"},
 {"hash":5882563,"name":"tfrmsettings.tabsheet2.caption","sourcebytes":[82,117,108,101,115],"value":"Rules"},
+{"hash":87496068,"name":"tfrmsettings.chkstatecreaterule.caption","sourcebytes":[84,104,101,32,194,171,67,114,101,97,116,101,32,82,117,108,101,194,187,32,99,104,101,99,107,98,111,120,32,105,115,32,99,104,101,99,107,101,100,32,98,121,32,100,101,102,97,117,108,116],"value":"The \u00ABCreate Rule\u00BB checkbox is checked by default"},
 {"hash":86477809,"name":"tfrmsettings.label1.caption","sourcebytes":[76,97,98,101,108,49],"value":"Label1"}
 ]}

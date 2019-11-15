@@ -12,14 +12,14 @@ type
   TFrmDialog = class(TForm)
     BtnGo: TButton;
     BtnCancel: TButton;
-    ChbCreateRule: TCheckBox;
+    ChkCreateRule: TCheckBox;
     ComboBox1: TComboBox;
     ImageList1: TImageList;
     EdURL: TLabeledEdit;
     LvBrowsers: TListView;
     procedure BtnCancelClick(Sender: TObject);
     procedure BtnGoClick(Sender: TObject);
-    procedure ChbCreateRuleChange(Sender: TObject);
+    procedure ChkCreateRuleChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -42,6 +42,8 @@ begin
   ComboBox1.Items.Add(rsForHost);
   ComboBox1.Items.Add(rsForPage);
   ComboBox1.ItemIndex := 0;
+  ChkCreateRule.Checked := StrToBoolDef(Settings.Values[SN_StateCreateRule], False);
+  ChkCreateRuleChange(ChkCreateRule);
 end;
 
 procedure TFrmDialog.FormShow(Sender: TObject);
@@ -74,7 +76,7 @@ begin
     sUrl := EncodeUrl(EdURL.Text);
 
     // Create rule
-    if ChbCreateRule.Checked then
+    if ChkCreateRule.Checked then
     begin
       BrowserId := LI.SubItems[1];
       case ComboBox1.ItemIndex of
@@ -106,9 +108,9 @@ begin
   Close;
 end;
 
-procedure TFrmDialog.ChbCreateRuleChange(Sender: TObject);
+procedure TFrmDialog.ChkCreateRuleChange(Sender: TObject);
 begin
-  ComboBox1.Enabled := ChbCreateRule.Checked;
+  ComboBox1.Enabled := ChkCreateRule.Checked;
 end;
 
 procedure TFrmDialog.FormClose(Sender: TObject; var CloseAction: TCloseAction);

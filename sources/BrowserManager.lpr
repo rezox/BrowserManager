@@ -8,8 +8,8 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   Windows,
   SysUtils,
   Forms,
-  ufrmmain,
   uglobal,
+  ufrmmain,
   ufrmdialog,
   ufrmsettings;
 

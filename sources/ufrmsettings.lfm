@@ -58,9 +58,9 @@ object FrmSettings: TFrmSettings
       ClientHeight = 292
       ClientWidth = 403
       object ChkAutorun: TCheckBox
-        Left = 16
+        Left = 8
         Height = 19
-        Top = 16
+        Top = 8
         Width = 203
         Caption = 'Start application on system startup'
         Enabled = False
@@ -69,6 +69,16 @@ object FrmSettings: TFrmSettings
     end
     object TabSheet2: TTabSheet
       Caption = 'Rules'
+      ClientHeight = 292
+      ClientWidth = 403
+      object ChkStateCreateRule: TCheckBox
+        Left = 8
+        Height = 19
+        Top = 8
+        Width = 282
+        Caption = 'The «Create Rule» checkbox is checked by default'
+        TabOrder = 0
+      end
     end
   end
   object Label1: TLabel

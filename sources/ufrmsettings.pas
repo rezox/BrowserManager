@@ -12,6 +12,7 @@ type
   TFrmSettings = class(TForm)
     BtnOK: TButton;
     BtnCancel: TButton;
+    ChkStateCreateRule: TCheckBox;
     ChkAutorun: TCheckBox;
     Label1: TLabel;
     PageControl1: TPageControl;

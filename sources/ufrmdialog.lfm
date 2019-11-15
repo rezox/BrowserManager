@@ -53,7 +53,7 @@ object FrmDialog: TFrmDialog
     OnDblClick = LvBrowsersDblClick
     OnKeyDown = LvBrowsersKeyDown
   end
-  object ChbCreateRule: TCheckBox
+  object ChkCreateRule: TCheckBox
     Left = 8
     Height = 19
     Top = 420
@@ -61,7 +61,7 @@ object FrmDialog: TFrmDialog
     Anchors = [akLeft, akBottom]
     Caption = 'Create rule:'
     Checked = True
-    OnChange = ChbCreateRuleChange
+    OnChange = ChkCreateRuleChange
     State = cbChecked
     TabOrder = 2
   end

@@ -10,7 +10,7 @@ msgstr ""
 msgid "Go!"
 msgstr ""
 
-#: tfrmdialog.chbcreaterule.caption
+#: tfrmdialog.chkcreaterule.caption
 msgid "Create rule:"
 msgstr ""
 
@@ -46,6 +46,10 @@ msgstr ""
 
 #: tfrmsettings.chkautorun.caption
 msgid "Start application on system startup"
+msgstr ""
+
+#: tfrmsettings.chkstatecreaterule.caption
+msgid "The «Create Rule» checkbox is checked by default"
 msgstr ""
 
 #: tfrmsettings.tabsheet1.caption
