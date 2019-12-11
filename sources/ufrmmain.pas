@@ -27,7 +27,7 @@ type
     procedure FormDestroy(Sender: TObject);
   private
     procedure GetBrowsers;
-    procedure ProcessCommandline(Data: Ansistring);
+    procedure ProcessCommandline(Data: AnsiString);
   public
     procedure CreateRule(URL: String; BrowserId: String);
   end;
@@ -78,11 +78,15 @@ end;
 procedure TFrmMain.FormCreate(Sender: TObject);
 var
   bCreateTables: Boolean;
+  Names: TStringList;
+  Reg: TRegistry;
+  I: Integer;
+  N: String;
 begin
   SetDefaultLang(GetDefaultLang);
 
   Caption := Application.Title;
-  TrayIcon1.Hint := AppTitle;
+  TrayIcon1.Hint := Application.Title;
 
   SQLiteDefaultLibrary := 'sqlite3.dll';
 
@@ -105,8 +109,8 @@ begin
     SQLQuery1.ExecSQL;
 
     // Create table for settings
-    SQLQuery1.SQL.Text := 'CREATE TABLE `settings` (`name` TEXT, `value` TEXT, UNIQUE (`name`) ON CONFLICT REPLACE);';
-    SQLQuery1.ExecSQL;
+    {SQLQuery1.SQL.Text := 'CREATE TABLE `settings` (`name` TEXT, `value` TEXT, UNIQUE (`name`) ON CONFLICT REPLACE);';
+    SQLQuery1.ExecSQL;}
 
     // Create table for browsers
     SQLQuery1.SQL.Text := 'CREATE TABLE `browsers` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, ' +
@@ -126,7 +130,7 @@ begin
 
   // Load settings.
   Settings := TStringList.Create;
-  SQLQuery1.SQL.Text := 'SELECT * FROM `settings`;';
+  {SQLQuery1.SQL.Text := 'SELECT * FROM `settings`;';
   SQLQuery1.ExecSQL;
   SQLQuery1.Open;
   while not SQLQuery1.EOF do
@@ -134,7 +138,25 @@ begin
     Settings.Add(SQLQuery1.FieldByName('name').AsString + '=' + SQLQuery1.FieldByName('value').AsString);
     SQLQuery1.Next;
   end;
-  SQLQuery1.Close;
+  SQLQuery1.Close;}
+  Reg := TRegistry.Create;
+  Reg.RootKey := HKEY_CURRENT_USER;
+  if Reg.OpenKeyReadOnly('SOFTWARE\' + AppCompany + '\' + AppName) then
+  begin
+    Names := TStringList.Create;
+    Reg.GetValueNames(Names);
+    for I := 0 to Names.Count - 1 do
+    begin
+      N := Names[I];
+      Settings.Add(N + '=' + Reg.ReadString(N));
+    end;
+    Names.Free;
+  end
+  else
+  begin
+    Settings.Add(SN_StateCreateRule + '=0');
+  end;
+  Reg.Free;
 
   // Get browsers and insert into DB
   GetBrowsers;
@@ -157,18 +179,23 @@ end;
 
 procedure TFrmMain.ActSettingsExecute(Sender: TObject);
 var
-  Values: String;
+  //Values: String;
+  Reg: TRegistry;
   I: Integer;
 begin
   with TFrmSettings.Create(Self) do
   begin
+    ChkAutorun.Checked := IsAutorun;
     ChkStateCreateRule.Checked := StrToBoolDef(Settings.Values[SN_StateCreateRule], False);
+
     if ShowModal = mrOk then
     begin
+      SetAutorun(ChkAutorun.Checked);
+
       Settings.Values[SN_StateCreateRule] := BoolToStr(ChkStateCreateRule.Checked);
 
       // Save settings
-      Values := '';
+      {Values := '';
       for I := 0 to Settings.Count - 1 do
       begin
         Values += '("' + Settings.Names[I] + '","' + Settings.ValueFromIndex[I] + '")';
@@ -179,13 +206,21 @@ begin
       begin
         SQLite3Connection1.ExecuteDirect('INSERT INTO `settings` (`name`, `value`) VALUES ' + Values + ';');
         SQLTransaction1.Commit;
+      end;}
+      Reg := TRegistry.Create;
+      Reg.RootKey := HKEY_CURRENT_USER;
+      if Reg.OpenKey('SOFTWARE\' + AppCompany + '\' + AppName, True) then
+      begin
+        for I := 0 to Settings.Count - 1 do
+          Reg.WriteString(Settings.Names[I], Settings.ValueFromIndex[I]);
       end;
+      Reg.Free;
     end;
     Free;
   end;
 end;
 
-procedure TFrmMain.ProcessCommandline(Data: Ansistring);
+procedure TFrmMain.ProcessCommandline(Data: AnsiString);
 var
   sUrl, sProt, sUser, sPass, sHost, sPort, sPath, sPara: String;
   bFounded: Boolean;
@@ -201,8 +236,7 @@ begin
     ParseURL(sUrl, sProt, sUser, sPass, sHost, sPort, sPath, sPara);
 
     // Find rule
-    SQLQuery1.SQL.Text := 'SELECT r.*, b.name, b."path" FROM rules r ' +
-      'INNER JOIN browsers b ON (b.id = r.browser_id) ' +
+    SQLQuery1.SQL.Text := 'SELECT r.*, b.name, b."path" FROM rules r ' + 'INNER JOIN browsers b ON (b.id = r.browser_id) ' +
       'WHERE r.url = :url OR r.url = :host';
     SQLQuery1.Params.ParseSQL(SQLQuery1.SQL.Text, True);
     SQLQuery1.Params.ParamByName('url').Value := sUrl;
@@ -265,10 +299,10 @@ begin
   end;
 end;
 
-Operator in (const AText: String; const AValues: array of String): Boolean;
+{Operator in (const AText: String; const AValues: array of String): Boolean;
 begin
   Result := AnsiIndexStr(AText, AValues) <> -1;
-end;
+end;}
 
 procedure TFrmMain.GetBrowsers;
 const

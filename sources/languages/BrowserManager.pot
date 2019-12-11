@@ -1,54 +1,44 @@
 msgid ""
-msgstr ""
-"Content-Type: text/plain; charset=UTF-8\n"
-"Project-Id-Version: \n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Sergey Solodyagin <solodyagin@gmail.com>\n"
-"Language-Team: \n"
-"MIME-Version: 1.0\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.7\n"
+msgstr "Content-Type: text/plain; charset=UTF-8"
 
 #: tfrmdialog.btncancel.caption
 msgctxt "tfrmdialog.btncancel.caption"
 msgid "Cancel"
-msgstr "Отмена"
+msgstr ""
 
 #: tfrmdialog.btngo.caption
 msgid "Go!"
-msgstr "Запуск!"
+msgstr ""
 
 #: tfrmdialog.chkcreaterule.caption
-msgctxt "tfrmdialog.chkcreaterule.caption"
 msgid "Create rule:"
-msgstr "Создать правило:"
+msgstr ""
 
 #: tfrmdialog.edurl.editlabel.caption
 msgid "Open URL:"
-msgstr "Открыть ссылку:"
+msgstr ""
 
 #: tfrmdialog.lvbrowsers.columns[0].caption
 msgid "Browser"
-msgstr "Браузер"
+msgstr ""
 
 #: tfrmdialog.lvbrowsers.columns[1].caption
 msgid "Path to executable"
-msgstr "Путь к исполняемому файлу"
+msgstr ""
 
 #: tfrmmain.actexit.caption
 msgid "Exit"
-msgstr "Выход"
+msgstr ""
 
 #: tfrmmain.actsettings.caption
 msgctxt "tfrmmain.actsettings.caption"
 msgid "Settings"
-msgstr "Настройки"
+msgstr ""
 
 #: tfrmsettings.btncancel.caption
 msgctxt "tfrmsettings.btncancel.caption"
 msgid "Cancel"
-msgstr "Отмена"
+msgstr ""
 
 #: tfrmsettings.btnok.caption
 msgid "OK"
@@ -56,34 +46,34 @@ msgstr ""
 
 #: tfrmsettings.chkautorun.caption
 msgid "Start application on system startup"
-msgstr "Запустить приложение при старте системы"
+msgstr ""
 
 #: tfrmsettings.chkstatecreaterule.caption
 msgid "The «Create Rule» checkbox is checked by default"
-msgstr "Включить флажок «Создать правило» по умолчанию"
+msgstr ""
 
 #: tfrmsettings.tabsheet1.caption
 msgid "General"
-msgstr "Основные"
+msgstr ""
 
 #: tfrmsettings.tabsheet2.caption
 msgid "Rules"
-msgstr "Правила"
+msgstr ""
 
 #: uglobal.rsbrowsernotfound
 msgid "Browser executable not found!"
-msgstr "Исполняемый файл браузера не найден!"
+msgstr ""
 
 #: uglobal.rsforhost
-msgctxt "uglobal.rsforhost"
 msgid "for host"
-msgstr "для хоста"
+msgstr ""
 
 #: uglobal.rsforpage
 msgid "for page"
-msgstr "для страницы"
+msgstr ""
 
 #: uglobal.rssettings
 msgctxt "uglobal.rssettings"
 msgid "Settings"
-msgstr "Настройки"
+msgstr ""
+

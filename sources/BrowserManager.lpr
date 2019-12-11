@@ -2,8 +2,8 @@ program BrowserManager;
 
 {$mode objfpc}{$H+}
 
-uses {$IFDEF UNIX} {$IFDEF UseCThreads}
-  cthreads, {$ENDIF} {$ENDIF}
+uses
+ {$IFDEF UNIX} {$IFDEF UseCThreads}cthreads, {$ENDIF} {$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Windows,
   SysUtils,
@@ -26,7 +26,7 @@ var
   SD: TSecurityDescriptor;
   MapFile: THandle;
   MapView: PMapView = nil;
-  Cmd: Ansistring;
+  Cmd: AnsiString;
   CopyData: TCopyDataStruct;
 
 begin
@@ -60,7 +60,7 @@ begin
   end;
 
   RequireDerivedFormResource := True;
-  Application.Title := 'TENROK Browser Manager';
+  Application.Title := 'Browser Manager';
   Application.Scaled := True;
   Application.Initialize;
   Application.CreateForm(TFrmMain, FrmMain);

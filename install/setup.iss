@@ -50,7 +50,7 @@ Source: "..\build\win64\*.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\build\win32\{#AppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\build\win32\*.dll"; DestDir: "{app}"; Flags: ignoreversion
 #endif
-Source: "..\sources\languages\*.*"; DestDir: "{app}\languages"
+Source: "..\sources\languages\*.mo"; DestDir: "{app}\languages"
 
 [Icons]
 Name: "{group}\{#AppVerName}"; Filename: "{app}\{#AppExeName}"; WorkingDir: "{app}"

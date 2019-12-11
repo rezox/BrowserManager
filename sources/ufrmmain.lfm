@@ -7,7 +7,7 @@ object FrmMain: TFrmMain
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poScreenCenter
-  LCLVersion = '2.0.4.0'
+  LCLVersion = '2.1.0.0'
   object TrayIcon1: TTrayIcon
     PopUpMenu = PopupMenu1
     Icon.Data = {
@@ -316,12 +316,12 @@ object FrmMain: TFrmMain
       0000
     }
     Visible = True
-    left = 48
-    top = 16
+    Left = 48
+    Top = 16
   end
   object PopupMenu1: TPopupMenu
-    left = 48
-    top = 80
+    Left = 48
+    Top = 80
     object MiSettings: TMenuItem
       Action = ActSettings
     end
@@ -330,8 +330,8 @@ object FrmMain: TFrmMain
     end
   end
   object ActionList1: TActionList
-    left = 120
-    top = 80
+    Left = 120
+    Top = 80
     object ActExit: TAction
       Caption = 'Exit'
       OnExecute = ActExitExecute
@@ -346,21 +346,22 @@ object FrmMain: TFrmMain
     LoginPrompt = False
     KeepConnection = False
     Transaction = SQLTransaction1
-    left = 48
-    top = 144
+    Left = 48
+    Top = 144
   end
   object SQLQuery1: TSQLQuery
     FieldDefs = <>
     Database = SQLite3Connection1
     Transaction = SQLTransaction1
     Params = <>
-    left = 144
-    top = 144
+    Macros = <>
+    Left = 144
+    Top = 144
   end
   object SQLTransaction1: TSQLTransaction
     Active = False
     Database = SQLite3Connection1
-    left = 232
-    top = 144
+    Left = 232
+    Top = 144
   end
 end

@@ -8,7 +8,7 @@ object FrmSettings: TFrmSettings
   ClientWidth = 557
   OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '2.0.4.0'
+  LCLVersion = '2.1.0.0'
   object TreeView1: TTreeView
     Left = 8
     Height = 336
@@ -63,7 +63,6 @@ object FrmSettings: TFrmSettings
         Top = 8
         Width = 203
         Caption = 'Start application on system startup'
-        Enabled = False
         TabOrder = 0
       end
     end
